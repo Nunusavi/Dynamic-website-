@@ -45,7 +45,7 @@
                 <div>
                     <i class="mycursor m-2 p-3 fa-solid fa-bars d-block d-md-none" id="togglingbtn"></i>
                 </div>
-                <img src="../Assets/Logo-bg.png" style="width: 50px;" alt="">
+                <img src="../Dashboard/Assets/Logo-bg.png" style="width: 50px;" alt="">
                 <p class="text-center mt-3 mx-3">TechVilleTechnologies</p>
             </div>
             <div class="d-flex flex-row mt-3 justify-content-around" style="gap: 1em;">
@@ -179,6 +179,7 @@
                 <table id="ProjectTable" class="table">
                     <thead>
                         <tr>
+                            <th scope="col">ID</th>
                             <th scope="col">Title</th>
                             <th scope="col">Description</th>
                             <th scope="col">Category</th>
@@ -193,11 +194,11 @@
                         $controller = new Controllers();
                         // Fetch projects from the controller
                         $projects = $controller->getProject();
-                        // Put the result of getProject() into an array
                         
                         // Loop through the projects and display them in the table
                         while ($row = $projects->fetch_assoc()){
                             echo '<tr>';
+                            echo '<td>' . $row['ProjectID'] . '</td>';
                             echo '<td>' . $row['ProjectTitle'] . '</td>';
                             echo '<td>' . $row['ProjectDescription'] . '</td>';
                             echo '<td>' . $row['ProjectTech'] . '</td>';
@@ -224,7 +225,8 @@
                     </div>
                     <div class="modal-body">
                         <!-- Form for adding a new Project -->
-                        <form id="addPortfolioForm" action="" method="post" enctype="multipart/form-data">
+                        <form id="addProjectForm" action="" method="post" enctype="multipart/form-data">
+                        <input type="hidden" name="form_id" value="addProjectForm">
                             <div class="mb-3">
                                 <label for="ProjectTitle" class="form-label">Title</label>
                                 <input type="text" class="form-control" id="ProjectTitle" name="ProjectTitle" placeholder="Enter title">
@@ -266,24 +268,6 @@
             </div>
         </div>
         <?php
-            
-            if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-                // Get the form data
-                if(isset($_POST['ProjectTitle']) && isset($_POST['ProjectTech']) && isset($_POST['ProjectDescription']) && isset($_FILES['ProjectImage']) && isset($_POST['ProjectDuration']) && isset($_POST['ProjectStatus'])){
-                $ProjectTitle = $_POST['ProjectTitle'];
-                $ProjectTech = $_POST['ProjectTech'];
-                $ProjectDescription = $_POST['ProjectDescription'];
-                $file = $_FILES['ProjectImage'];
-                $ProjectDuration = $_POST['ProjectDuration'];
-                $ProjectStatus = ($_POST['ProjectStatus'] === 'completedSelect') ? 'Completed' : 'Ongoing';
-            }
-                // Create an instance of the controller class
-                $controller = new Controllers();
-                
-                // Call the method to upload the project to the database
-                $controller->addProject($ProjectTitle, $ProjectDescription, $ProjectDuration, $ProjectTech, $file,$ProjectStatus);
-            }
-            
         ?>
         
         <!-- Modal for editing existing Project -->
@@ -296,7 +280,8 @@
                     </div>
                     <div class="modal-body">
                         <!-- Form for editing an existing Project -->
-                        <form id="editPortfolioForm" method="post">
+                        <form id="editProjectForm" method="post">
+                        <input type="hidden" name="form_id" value="editProjectForm">
                             <div class="mb-3">
                                 <label for="editPortfolioTitle" class="form-label">Title</label>
                                 <input type="text" class="form-control" name="editProjectTitle"  id="editPortfolioTitle" placeholder="Enter title">
@@ -338,26 +323,9 @@
         </div>
        </div>
         <?php
-    if(isset($_POST['editProjectTitle']) && isset($_POST['editProjectCatagory']) && isset($_POST['editProjectDescription']) && isset($_FILES['editProjectImage']) && isset($_POST['editProjectDuration']) && isset($_POST['ProjectStatus'])){
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            // Get the form data
-            if (isset($_POST['editProjectTitle']) && isset($_POST['editProjectCatagory']) && isset($_POST['editProjectDescription']) && isset($_FILES['editProjectImage']) && isset($_POST['editProjectDuration']) && isset($_POST['ProjectStatus'])) {
-                $ProjectTitle = $_POST['editProjectTitle'];
-                $ProjectTech = $_POST['editProjectCatagory'];
-                $ProjectDescription = $_POST['editProjectDescription'];
-                $file = $_FILES['editProjectImage'];
-                $ProjectDuration = $_POST['editProjectDuration'];
-                $ProjectStatus = ($_POST['ProjectStatus'] === 'completedSelect') ? 'Completed' : 'Ongoing';
-            }
-            // Create an instance of the controller class
-            $controller = new Controllers();
-            
-            // Call the method to upload the project to the database
-            $controller->editProject($ProjectTitle, $ProjectTech, $ProjectDescription, $file, $ProjectDuration, $ProjectStatus);
-        }
-    }
+   
         ?>
-         <!--For Project -->
+         <!--For Partner -->
          <div>
             <h1 id="Project">Partners</h1>
             <div class="div p-3">
@@ -372,6 +340,7 @@
                 <table id="PartnerTable" class="table">
                     <thead>
                         <tr>
+                            <th scope="col">ID</th>
                             <th scope="col"> Company Name</th>
                             <th scope="col">Description</th>
                             <th scope="col">Logo</th>
@@ -390,11 +359,12 @@
                         // Loop through the projects and display them in the table
                         while ($row = $partner->fetch_assoc()){
                             echo '<tr>';
-                            echo '<td>' . $row['Company name'] . '</td>';
-                            echo '<td>' . $row['Description'] . '</td>';
-                            echo '<td><img src="' . $row['Logo'] . '" id="projectImage" style="width: 50%; height: 50%;" alt="Project Image"></td>';
-                            echo '<td>' . $row['Duration'] . '</td>';
-                            echo '<td>' . $row['Status'] . '</td>';
+                            echo '<td>' . $row['PartnerID'] . '</td>';
+                            echo '<td>' . $row['CompanyName'] . '</td>';
+                            echo '<td>' . $row['CompanyDescription'] . '</td>';
+                            echo '<td><img src="' . $row['CompanyLogo'] . '" id="projectImage" style="width: 50%; height: 50%;" alt="Project Image"></td>';
+                            echo '<td>' . $row['CompanyDuration'] . '</td>';
+                            echo '<td>' . $row['PartnershipStatus'] . '</td>';
                             echo '<td>' . (isset($row['Partner']) ? $row['Partner'] : '') . '</td>';
                             echo '<td>' . '<button class="btn btn-primary edit-btn" data-bs-toggle="modal" data-bs-target="#editPortfolioModal"><i class="fas fa-pen"></i> Edit</button>' . '<button class="btn btn-danger delete-btn mx-1"><i class="fas fa-trash"></i> Delete</button>' . '</td>';
                             echo '</tr>';
@@ -415,8 +385,55 @@
                     </div>
                     <div class="modal-body">
                         <!-- Form for adding a new Partner -->
-                        <form id="addPortfolioForm" action="" method="post" enctype="multipart/form-data">
+                        <form id="addPartnerForm" action="" method="post" enctype="multipart/form-data">
+                        <input type="hidden" name="form_id" value="addPartnerForm">
                             <div class="mb-3">
+                                <label for="PartnerTitle" class="form-label">Company Name</label>
+                                <input type="text" class="form-control" id="PartnerTitle" name="PartnerName" placeholder="Enter Name">
+                            </div>
+                            <div class="mb-3">
+                                <label for="PartnerCategory" class="form-label">Description</label>
+                                <textarea class="form-control" id="PartnerDescription" name="Description" placeholder="Enter Discription"></textarea>
+                            </div>
+                            <div class="">
+                                <label for="image1" class="form-label">Company Logo</label>
+                                <input type="File" class="form" id="image" name="PartnerImage" placeholder="Upload Imgae">
+                            </div>
+                            <div class="mb-3">
+                                <label for="PartnerDuration" class="form-label">Partner Duration</label>
+                                <input type="text" class="form-control" id="PartnerUrl" name="PartnerDuration" placeholder="Enter Partner Duration">
+                            </div>                            
+                            <!-- You can add more fields as needed -->
+                            <div class="mb-3">
+                                <label for="PartnerStatus" class="form-label"> Partner Status</label>
+                                <input type="radio" name="PartnerStatus" id="ongoingSelect" checked>
+                                <label for="active">Active</label>
+                                <input type="radio" name="PartnerStatus" id="completedSelect">
+                                <label for="inactive">Inactive</label>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                <button type="submit" class="btn btn-primary" id="savePortfolioBtn">Save changes</button>
+                            </div>
+                        </form>
+                    </div>
+                    
+                </div>
+            </div>
+        </div>
+        <!-- Modal to edit partner -->
+        <div class="modal fade" id="editPortfolioModal" tabindex="-1" role="dialog" aria-labelledby="editPortfolioModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="editPortfolioModalLabel">Edit Portfolio</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">x</button>
+                    </div>
+                    <div class="modal-body">
+                        <!-- Form for editing an existing Project -->
+                        <form id="editPartnerForm" method="post" enctype="multipart/form-data">
+                        <input type="hidden" name="form_id" value="editPartnerForm">
+                        <div class="mb-3">
                                 <label for="PartnerTitle" class="form-label">Company Name</label>
                                 <input type="text" class="form-control" id="PartnerTitle" name="PartnerName" placeholder="Enter Name">
                             </div>
@@ -450,72 +467,44 @@
                 </div>
             </div>
         </div>
-        <?php
-            if(isset($_POST['PartnerName']) && isset($_POST['Description']) && isset($_FILES['PartnerImage']) && isset($_POST['PartnerDuration']) && isset($_POST['PartnerStatus'])){
-                if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-                    // Get the form data
-                    if (isset($_POST['PartnerName']) && isset($_POST['Description']) && isset($_FILES['PartnerImage']) && isset($_POST['PartnerDuration']) && isset($_POST['PartnerStatus'])) {
-                        $PartnerName = $_POST['PartnerName'];
-                        $Description = $_POST['Description'];
-                        $PartenrImage = $_FILES['PartnerImage'];
-                        $PartnerDuration = $_POST['PartnerDuration'];
-                        $PartnerStatus = ($_POST['PartnerStatus'] === 'completedSelect') ? 'Completed' : 'Ongoing';
-                    }
-                    // Create an instance of the controller class
-                    $controller = new Controllers();
-                    
-                    // Call the method to upload the project to the database
-                    $controller->addPartner($PartnerName, $Description, $PartenrImage, $PartnerDuration, $PartnerStatus);
-                }
-            }
-        ?>
+       </div>
         <!-- Add testimony -->
         <div>
             <h1 id="testimony">Testimonials</h1>
             <div class="p-3">
-                <!-- <div class="d-flex justify-content-en mb-3">
-                    <p class="m-2"><i class="fa-solid fa-filter"></i> Filters</p>
-                    <button class="btn-warning rounded">+Add testimony</button>
-                </div> -->
+            <div class="d-flex justify-content-start mb-3">
+                    <div class="d-flex mb-3">
+                        <input type="text" class="form-control" id="titleFilter" placeholder="Filter by title">
+                    </div>
+                    <div>
+                        <button  class="btn btn-warning rounded" id="addPartnerBtn">+ Add Partner</button>
+                    </div>
+                </div>
                 <table class="table">
                     <thead>
                         <tr>
                             <th scope="col">Name</th>
-                            <th scope="col">title</th>
-                            <th scope="col">Testimony</th>
-                            <th scope="col">image 1</th>
+                            <th scope="col">Email</th>
+                            <th scope="col">Phone Number</th>
+                            <th scope="col">Message</th>
                             <!-- <th scope="col">URL link</th> -->
                         </tr>
                     </thead>
                     <tbody>
-                        <tr>
-                            <td>John Micheal</td>
-                            <td>Web dev</td>
-                            <td>What a dedication</td>
-                            <td>Upload</td>
-                            <!-- <td><i class="mycursor fa-solid fa-pen-to-square"></i></td> -->
-                        </tr>
-                        <tr>
-                            <td>Smith George</td>
-                            <td>Mobile app</td>
-                            <td>Best</td>
-                            <td>Upload</td>
-                            <!-- <td><i class="mycursor  fa-solid fa-pen-to-square"></i></td> -->
-                        </tr>
-                        <tr>
-                            <td>Grace </td>
-                            <td>Wordpress</td>
-                            <td>Examplary work</td>
-                            <td>Upload</td>
-                            <!-- <td><i class="mycursor fa-solid fa-pen-to-square"></i></td> -->
-                        </tr>
-                        <tr>
-                            <td>Mary</td>
-                            <td>Awards</td>
-                            <td>Wow </td>
-                            <td>Upload</td>
-                            <!-- <td><i class="mycursor fa-solid fa-pen-to-square"></i></td> -->
-                        </tr>
+                        <?php
+                        $controller = new Controllers();
+
+                        $Query = $controller->getQuery();
+
+                        while ($row = $Query->fetch_assoc()){
+                            echo '<tr>';
+                            echo '<td>' . $row['Name'] . '</td>';
+                            echo '<td>' . $row['Email'] . '</td>';
+                            echo '<td>' . $row['PhoneNumber'] . '</td>';
+                            echo '<td>' . $row['Message'] . '</td>';
+                            echo '</tr>';
+                        }
+                        ?>
                     </tbody>
                 </table>
             </div>
@@ -523,7 +512,69 @@
     </section>
 </body>
 <?php
-    
+    if($_SERVER['REQUEST_METHOD'] === 'POST'){
+        $form_id = $_POST['form_id'] ?? null;
+
+        if( $form_id === 'addProjectForm'){
+            if(isset($_POST['ProjectTitle']) && isset($_POST['ProjectTech']) && isset($_POST['ProjectDescription']) && isset($_FILES['ProjectImage']) && isset($_POST['ProjectDuration']) && isset($_POST['ProjectStatus'])){
+                $ProjectTitle = $_POST['ProjectTitle'];
+                $ProjectTech = $_POST['ProjectTech'];
+                $ProjectDescription = $_POST['ProjectDescription'];
+                $file = $_FILES['ProjectImage'];
+                $ProjectDuration = $_POST['ProjectDuration'];
+                $ProjectStatus = ($_POST['ProjectStatus'] === 'completedSelect') ? 'Completed' : 'Ongoing';
+            }
+                // Create an instance of the controller class
+                $controller = new Controllers();
+                // Call the method to upload the project to the database
+                $controller->addProject($ProjectTitle, $ProjectDescription, $ProjectDuration, $ProjectTech, $file,$ProjectStatus);
+        }elseif( $form_id === 'editProjectForm'){
+            if (isset($_POST['editProjectTitle']) && isset($_POST['editProjectCatagory']) && isset($_POST['editProjectDescription']) && isset($_FILES['editProjectImage']) && isset($_POST['editProjectDuration']) && isset($_POST['ProjectStatus'])) {
+                // get the id of the row to be edited
+                $ProjectID = $_POST['ProjectID'];
+                $ProjectTitle = $_POST['editProjectTitle'];
+                $ProjectTech = $_POST['editProjectCatagory'];
+                $ProjectDescription = $_POST['editProjectDescription'];
+                $file = $_FILES['editProjectImage'];
+                $ProjectDuration = $_POST['editProjectDuration'];
+                $ProjectStatus = ($_POST['ProjectStatus'] === 'completedSelect') ? 'Completed' : 'Ongoing';
+            }
+            // Create an instance of the controller class
+            $controller = new Controllers();
+            
+            // Call the method to upload the project to the database
+            $controller->editProject($ProjectID, $ProjectTitle, $ProjectTech, $ProjectDescription, $file, $ProjectDuration, $ProjectStatus);
+        }elseif($form_id === 'addPartnerForm'){
+            if(isset($_POST['PartnerName']) && isset($_POST['Description']) && isset($_FILES['PartnerImage']) && isset($_POST['PartnerDuration']) && isset($_POST['PartnerStatus'])){
+                $PartnerName = $_POST['PartnerName'];
+                $Description = $_POST['Description'];
+                $PartnerLogo = $_FILES['PartnerImage'];
+                $PartnerDuration = $_POST['PartnerDuration'];
+                $PartnerStatus = ($_POST['PartnerStatus'] === 'completedSelect') ? 'Completed' : 'Ongoing';
+            }
+            // Create an instance of the controller class
+            $controller = new Controllers();
+            
+            // Call the method to upload the project to the database
+            $controller->addPartner($PartnerName, $Description, $PartnerLogo, $PartnerDuration, $PartnerStatus);
+        }elseif($form_id === 'editPartnerForm'){
+            if(isset($_POST['PartnerName']) && isset($_POST['Description']) && isset($_FILES['PartnerImage']) && isset($_POST['PartnerDuration']) && isset($_POST['PartnerStatus'])){
+                // get the id of the row to be edited
+                $PartnerID = $_POST['PartnerID'];
+                $PartnerName = $_POST['PartnerName'];
+                $Description = $_POST['Description'];
+                $PartenrImage = $_FILES['PartnerImage'];
+                $PartnerDuration = $_POST['PartnerDuration'];
+                $PartnerStatus = ($_POST['PartnerStatus'] === 'completedSelect') ? 'Completed' : 'Ongoing';
+            }
+            // Create an instance of the controller class
+            $controller = new Controllers();
+            
+            // Call the method to upload the project to the database
+            $controller->editPartner($PartnerID,$PartnerName, $Description, $PartenrImage, $PartnerDuration, $PartnerStatus);
+        }
+
+    }
 ?>
 
 
@@ -617,35 +668,32 @@
         }
     });
 
-    // Script to handle filtering
-    $('#titleFilter').on('input', function() {
-        var titleFilter = $('#titleFilter').val().toLowerCase();
-        
-        $('#ProjectTable tbody tr').each(function() {
-            var title = $(this).find('td:nth-child(1)').text().toLowerCase();
-            
-            if (title.includes(titleFilter)) {
-                $(this).show();
-            } else {
-                $(this).hide();
-            }
+   
+
+  // Filreter for Project
+    $(document).ready(function(){
+        $("#titleFilter").on("keyup", function() {
+            var value = $(this).val().toLowerCase();
+            $("#ProjectTable tbody tr").filter(function() {
+                $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+            });
         });
     });
-</script>
+    // filter for Partner
+    $(document).ready(function(){
+        $("#titleFilter").on("keyup", function() {
+            var value = $(this).val().toLowerCase();
+            $("#PartnerTable tbody tr").filter(function() {
+                $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+            });
+        });
+    });
+    </script>
+
 
 
 <!-- Loging out -->
-<script>
-    document.getElementById('logoutLink').addEventListener('click', function (event) {
-        event.preventDefault(); // Prevents the default link behavior (redirecting to the href)
 
-        // You can add additional logic here before redirecting
-        // For example, you could display a confirmation dialog:
-        if (confirm('Are you sure you want to log out?')) {
-            window.location.href = event.target.href; // Redirect to the href of the link
-        }
-    });
-</script>
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>

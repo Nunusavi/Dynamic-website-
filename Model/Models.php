@@ -73,7 +73,7 @@ class Project extends Admin{
     protected function addProject($ProjectTitle, $ProjectDescription, $ProjectDuration, $ProjectTech, $file, $ProjectStatus)
 {
     // Image upload code
-    $target_dir = "../uploads/Projects";  // Adjust path as needed
+    $target_dir = "../uploads/Projects/";  // Adjust path as needed
     $file = $_FILES["ProjectImage"];  // Assuming the image input name is "image"
 if (!file_exists($target_dir)) {
     mkdir($target_dir, 0755, true); 
@@ -106,8 +106,8 @@ if (!file_exists($target_dir)) {
     $result = $this->c()->query($stmt);
     return $result;
 }
-    protected  function updateProject($ProjectTitle, $ProjectTech, $ProjectDescription, $file, $ProjectDuration, $ProjectStatus){
-        $stmt = "UPDATE projects SET ProjectTech = '$ProjectTech', ProjectDescription = '$ProjectDescription', ProjectImage = '$file', ProjectDuration = '$ProjectDuration', ProjectStatus = '$ProjectStatus' WHERE ProjectTitle = '$ProjectTitle'";
+    protected  function updateProject($ProjectID,$ProjectTitle, $ProjectTech, $ProjectDescription, $file, $ProjectDuration, $ProjectStatus){
+        $stmt = "UPDATE projects where ProjectID = '$ProjectID' SET ProjectTech = '$ProjectTech', ProjectDescription = '$ProjectDescription', ProjectImage = '$file', ProjectDuration = '$ProjectDuration', ProjectStatus = '$ProjectStatus' WHERE ProjectTitle = '$ProjectTitle'";
         $result = $this->c()->query($stmt);
         return $result;
     }
@@ -131,9 +131,9 @@ if (!file_exists($target_dir)) {
             return $result;
         }
     }
-    public function importEditProjectData($ProjectTitle, $ProjectTech, $ProjectDescription, $file, $ProjectDuration, $ProjectStatus){
+    public function importEditProjectData($ProjectID, $ProjectTitle, $ProjectTech, $ProjectDescription, $file, $ProjectDuration, $ProjectStatus){
         $pr = new Project();
-        $result = $pr->updateProject($ProjectTitle, $ProjectTech, $ProjectDescription, $file, $ProjectDuration, $ProjectStatus);
+        $result = $pr->updateProject($ProjectID,$ProjectTitle, $ProjectTech, $ProjectDescription, $file, $ProjectDuration, $ProjectStatus);
         return $result;
     }
     public function fetchProjectData(){
@@ -159,23 +159,23 @@ class Partners extends admin{
 
     //Methods 
     protected  function getPartner(){
-        $stmt = "SELECT * from Partners";
+        $stmt = "SELECT * from partners";
         $result = $this->c()->query($stmt);
         return $result;
     }
     protected  function getPartnerById($PartnerID){
-        $stmt = "SELECT * from Partners where PartnerID = '$PartnerID'";
+        $stmt = "SELECT * from partners where PartnerID = '$PartnerID'";
         $result = $this->c()->query($stmt);
         return $result;
     }
-    protected  function addPartner($PartnerName, $PartnerLogo, $PartnerDiscription, $PartnerStartDate, $PartnerEndDate){
+    protected  function addPartner($PartnerName, $PartnerDiscription, $PartnerLogo, $PartnerDuration, $PartnerStatus){
         // add Image upload code here
         // Image upload code
-    $target_dir = "../uploads/Partners";  // Adjust path as needed
+    $target_dir = "../uploads/Partners/";  // Adjust path as needed
     $file = $_FILES["PartnerImage"];  // Assuming the image input name is "image"
-if (!file_exists($target_dir)) {
-    mkdir($target_dir, 0755, true); 
-}
+        if (!file_exists($target_dir)) {
+            mkdir($target_dir, 0755, true); 
+        }
 
     // Generate a unique filename with timestamp
     $uniqueFilename = "Techville_" . str_replace(' ', '_', $PartnerName) . "_" . time() . ".png";
@@ -198,22 +198,22 @@ if (!file_exists($target_dir)) {
             echo "<sript>alert('Sorry, there was an error uploading your file.')</script>";
         }
     }
-        $stmt = "INSERT INTO Partners (PartnerName, PartnerLogo, PartnerDiscription, PartnerStartDate, PartnerEndDate) VALUES ('$PartnerName', '$PartnerLogo', '$PartnerDiscription', '$PartnerStartDate', '$PartnerEndDate')";
+        $stmt = "INSERT INTO partners (CompanyName, CompanyDescription, CompanyLogo, CompanyDuration, PartnershipStatus) VALUES ('$PartnerName', '$PartnerDiscription', '$target_file', '$PartnerDuration', '$PartnerStatus')";
         $result = $this->c()->query($stmt);
         return $result;
     }
-    protected  function updatePartner($PartnerID, $PartnerName, $PartnerLogo, $PartnerDiscription, $PartnerStartDate, $PartnerEndDate){
-        $stmt = "UPDATE Partners SET PartnerName = '$PartnerName', PartnerLogo = '$PartnerLogo', PartnerDiscription = '$PartnerDiscription', PartnerStartDate = '$PartnerStartDate', PartnerEndDate = '$PartnerEndDate' WHERE PartnerID = '$PartnerID'";
+    protected  function updatePartner($PartnerID, $PartnerName, $PartnerLogo, $PartnerDiscription,$PartnerDuration,$PartnerStatus){
+        $stmt = "UPDATE partners SET CompanyName = '$PartnerName', CompanyLogo = '$PartnerLogo', CompanyDescription = '$PartnerDiscription', CompanyDuration = '$PartnerDuration', PartnershipStatus = '$PartnerStatus' WHERE PartnerID = '$PartnerID'";
         $result = $this->c()->query($stmt);
         return $result;
     }
     protected  function deletePartner($PartnerID){
-        $stmt = "DELETE FROM Partners WHERE PartnerID = '$PartnerID'";
+        $stmt = "DELETE FROM partners WHERE PartnerID = '$PartnerID'";
         $result = $this->c()->query($stmt);
         return $result;
     }
     protected function getTotalPartners(){
-        $stmt = "SELECT COUNT(*) from Partners";
+        $stmt = "SELECT COUNT(*) from partners";
         $result = $this->c()->query($stmt);
         return $result;
     }
@@ -222,27 +222,39 @@ if (!file_exists($target_dir)) {
         $result = $pr->getPartner();
         return $result;
     } 
-    public function importPartnerData($PartnerName, $PartnerLogo, $PartnerDiscription, $PartnerStartDate, $PartnerEndDate){
+    public function importPartnerData($PartnerName, $PartnerDiscription, $PartnerLogo,$PartnerDuration,$PartnerStatus){
         $pr = new Partners();
-        $result = $pr->addPartner($PartnerName, $PartnerLogo, $PartnerDiscription, $PartnerStartDate, $PartnerEndDate);
+        $result = $pr->addPartner($PartnerName, $PartnerDiscription, $PartnerLogo,$PartnerDuration,$PartnerStatus);
+        return $result;
+    }
+    public function importEditPartnerData($PartnerID, $PartnerName, $PartnerLogo, $PartnerDiscription, $PartnerDuration, $PartnerStatus){
+        $pr = new Partners();
+        $result = $pr->updatePartner($PartnerID, $PartnerName, $PartnerLogo, $PartnerDiscription, $PartnerDuration, $PartnerStatus);
         return $result;
     }
         
 }
-class ContactQuery extends Admin{
+class Query extends Admin{
     //Properties 
     protected int $QueryId;
     protected string $FullName;
     protected string $Email;
-    protected String $Query_Message;
+    protected int $PhoneNumber;
     protected string $QueryDate;
+    protected string $Query;
 
     //Methods 
     Protected function get_query(){
-        $stmt = "Select * from  ContactQuery";
+        $stmt = "Select * from  contact";
         $result = $this->c()->query($stmt);
         return $result;
     }
+    public function fetchQueryData(){
+        $pr = new Query();
+        $result = $pr->get_query();
+        return $result;
+    }
+    
 
 }
 ?>

@@ -42,9 +42,9 @@ class Controllers extends Admin{
     }
     
     // Method to edit project
-    public function editProject( $ProjectTitle, $ProjectTech, $ProjectDescription, $file, $ProjectDuration, $ProjectStatus){
+    public function editProject($ProjectID, $ProjectTitle, $ProjectTech, $ProjectDescription, $file, $ProjectDuration, $ProjectStatus){
         $pr = new Project();
-        $result = $this->$pr->editProject($ProjectTitle, $ProjectTech, $ProjectDescription, $file, $ProjectDuration, $ProjectStatus);
+        $result = $this->$pr->editProject($ProjectID, $ProjectTitle, $ProjectTech, $ProjectDescription, $file, $ProjectDuration, $ProjectStatus);
         return $result;
     }
     // Method to delete project
@@ -60,15 +60,15 @@ class Controllers extends Admin{
         return $result;
     }
     // Method to add partner
-    public function addPartner($PartnerName, $PartnerLogo, $PartnerDiscription, $PartnerStartDate, $PartnerEndDate){
+    public function addPartner($PartnerName, $PartnerDiscription, $PartnerLogo, $PartnerDuration, $PartnerStatus){
         $pa = new Partners();
-        $result = $this->$pa->addPartner($PartnerName, $PartnerLogo, $PartnerDiscription, $PartnerStartDate, $PartnerEndDate);
+        $result = $pa->importPartnerData($PartnerName,$PartnerDiscription, $PartnerLogo,  $PartnerDuration, $PartnerStatus);
         return $result;
     }
     // Method to edit partner
-    public function editPartner($PartnerID, $PartnerName, $PartnerLogo, $PartnerDiscription, $PartnerStartDate, $PartnerEndDate){
+    public function editPartner($PartnerID, $PartnerName, $PartnerLogo, $PartnerDiscription, $PartnerDuration, $PartnerStatus){
         $pa = new Partners();
-        $result = $this->$pa->editPartner($PartnerID, $PartnerName, $PartnerLogo, $PartnerDiscription, $PartnerStartDate, $PartnerEndDate);
+        $result = $pa->importEditPartnerData($PartnerID, $PartnerName, $PartnerLogo, $PartnerDiscription, $PartnerDuration, $PartnerStatus);
         return $result;
     }
     // Method to delete partner
@@ -77,7 +77,11 @@ class Controllers extends Admin{
         $result = $this->$pa->deletePartner($PartnerID);
         return $result;
     }
-
+    public function getQuery(){
+        $qu = new Query();
+        $result = $qu->fetchQueryData();
+        return $result;
+    }
     
 
 }
