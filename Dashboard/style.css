@@ -1,0 +1,65 @@
+/* Custom CSS for the side menu */
+.side-menu {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 250px;
+    padding-top: 100px;
+    padding-left: 20px;
+    background-color: #333;
+    transition: width 0.3s;
+    z-index: -1;
+}
+
+
+.side-menu .nav-link {
+    color: white;
+}
+
+.content {
+    margin-left: 250px;
+    padding: 20px;
+}
+
+.projectImage{
+    width: 10%;
+    height: 10%;
+
+}
+
+body {
+    /* padding-top: 56px; */
+}
+
+
+.vl {
+    border-left: 2px solid rgb(0, 0, 0);
+    height: 30px;
+  }
+
+
+
+@media (max-width: 768px) {
+    .side-menu {
+        /* width: 0; */
+    }
+    .content {
+        /* margin-left: 0; */
+    }
+}
+
+/* When the input field is focused */
+.wfocus:focus{
+    outline: none;
+}
+
+/* Curspor */
+.mycursor{
+    cursor: pointer;
+}
+
+/* Toggle */
+.hidde{
+    display: none;;
+}
