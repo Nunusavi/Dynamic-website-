@@ -12,6 +12,12 @@ class Admin extends Db{
         $result = $this->c()->query($stmt);
         return $result;
     }
+    protected function errorhandler($error){
+        echo "<script>alert('$error')</script>";
+    }
+    public function refresh(){
+        echo "<meta http-equiv='refresh' content='0'>";
+    }
 }
 class Project extends Admin{
     //properties 
@@ -70,51 +76,100 @@ class Project extends Admin{
         return $result;
     }
     
-    protected function addProject($ProjectTitle, $ProjectDescription, $ProjectDuration, $ProjectTech, $file, $ProjectStatus)
-{
-    // Image upload code
-    $target_dir = "../uploads/Projects/";  // Adjust path as needed
-    $file = $_FILES["ProjectImage"];  // Assuming the image input name is "image"
-if (!file_exists($target_dir)) {
-    mkdir($target_dir, 0755, true); 
-}
+    protected function addProject($ProjectTitle, $ProjectTech, $ProjectDescription, $file, $ProjectDuration, $ProjectStatus)
+    {
+        try {
+            // Image upload code
+            $target_dir = "../uploads/Projects/";  // Adjust path as needed
+            $file = $_FILES["ProjectImage"];  // Assuming the image input name is "image"
+            if (!file_exists($target_dir)) {
+                mkdir($target_dir, 0755, true); 
+            }
 
-    // Generate a unique filename with timestamp
-    $uniqueFilename = "Techville_" . str_replace(' ', '_', $ProjectTitle) . "_" . time() . ".png";
-    $target_file = $target_dir . $uniqueFilename;
+            // Generate a unique filename with timestamp
+            $uniqueFilename = "Techville_" . str_replace(' ', '_', $ProjectTitle) . "_" . time() . ".png";
+            $target_file = $target_dir . $uniqueFilename;
 
-    $uploadOk = 1;
-    $imageFileType = strtolower(pathinfo($target_file, PATHINFO_EXTENSION));
+            $uploadOk = 1;
+            $imageFileType = strtolower(pathinfo($target_file, PATHINFO_EXTENSION));
 
-    // Image validation checks (same as previous example)
+            // Image validation checks (same as previous example)
 
-    // Check if $uploadOk is set to 0 by an error
-    if ($uploadOk == 0) {
-        echo "<script>alert('Sorry, your file was not uploaded.')</script>";
-        exit;
-    // If everything is ok, try to upload file
-    } else {
-        if (move_uploaded_file($file["tmp_name"], $target_file)) {
-            echo "<script>alert('The file ". basename( $file["name"]). " has been uploaded.');</script>";
-        } else {
-            echo "<sript>alert('Sorry, there was an error uploading your file.')</script>";
+            // Check if $uploadOk is set to 0 by an error
+            if ($uploadOk == 0) {
+                $this->errorhandler("Sorry, your file was not uploaded.");
+                return;
+            }
+
+            // If everything is ok, try to upload file
+            if (move_uploaded_file($file["tmp_name"], $target_file)) {
+                echo "<script>alert('The file ". basename( $file["name"]). " has been uploaded.');</script>";
+            } else {
+                $this->errorhandler("Sorry, there was an error uploading your file.");
+                return;
+            }
+
+            // Insert image path into database
+            $stmt = "INSERT INTO projects (ProjectTitle, ProjectTech, ProjectDescription, ProjectImage, ProjectDuration, ProjectStatus) VALUES ('$ProjectTitle', '$ProjectTech', '$ProjectDescription', '$target_file', '$ProjectDuration', '$ProjectStatus')";
+            $result = $this->c()->query($stmt);
+            return $result;
+        } catch (Exception $e) {
+            $this->errorhandler($e->getMessage());
+            return;
         }
     }
 
-    // Insert image path into database
-    $stmt = "INSERT INTO projects (ProjectTitle, ProjectTech, ProjectDescription, ProjectImage, ProjectDuration, ProjectStatus) VALUES ('$ProjectTitle', '$ProjectTech', '$ProjectDescription', '$target_file', '$ProjectDuration', '$ProjectStatus')";
-    $result = $this->c()->query($stmt);
-    return $result;
-}
-    protected  function updateProject($ProjectID,$ProjectTitle, $ProjectTech, $ProjectDescription, $file, $ProjectDuration, $ProjectStatus){
-        $stmt = "UPDATE projects where ProjectID = '$ProjectID' SET ProjectTech = '$ProjectTech', ProjectDescription = '$ProjectDescription', ProjectImage = '$file', ProjectDuration = '$ProjectDuration', ProjectStatus = '$ProjectStatus' WHERE ProjectTitle = '$ProjectTitle'";
-        $result = $this->c()->query($stmt);
-        return $result;
+    protected function updateProject($ProjectTitle, $ProjectTech, $ProjectDescription, $file, $ProjectDuration, $ProjectStatus, $ProjectID){
+        try{
+            // Image upload code
+            $target_dir = "../uploads/Projects/";  // Adjust path as needed
+            $file = $_FILES["ProjectImage"];  // Assuming the image input name is "image"
+            if (!file_exists($target_dir)) {
+                mkdir($target_dir, 0755, true); 
+            }
+
+            // Generate a unique filename with timestamp
+            $uniqueFilename = "Techville_" . str_replace(' ', '_', $ProjectTitle) . "_" . time() . ".png";
+            $target_file = $target_dir . $uniqueFilename;
+
+            $uploadOk = 1;
+            $imageFileType = strtolower(pathinfo($target_file, PATHINFO_EXTENSION));
+
+            // Image validation checks (same as previous example)
+
+            // Check if $uploadOk is set to 0 by an error
+            if ($uploadOk == 0) {
+                $this->errorhandler("Sorry, your file was not uploaded.");
+                return;
+            }
+
+            // If everything is ok, try to upload file
+            if (move_uploaded_file($file["tmp_name"], $target_file)) {
+                echo "<script>alert('The file ". basename( $file["name"]). " has been uploaded.');</script>";
+            } else {
+                $this->errorhandler("Sorry, there was an error uploading your file.");
+                return;
+            }
+
+            // Insert image path into database
+            $stmt = "UPDATE projects SET ProjectTitle = '$ProjectTitle', ProjectTech = '$ProjectTech', ProjectDescription = '$ProjectDescription', ProjectImage = '$target_file', ProjectDuration = '$ProjectDuration', ProjectStatus = '$ProjectStatus' WHERE ProjectId = '$ProjectID'";
+            $result = $this->c()->query($stmt);
+            return $result;
+        } catch (Exception $e) {
+            $this->errorhandler($e->getMessage());
+            return;
+        }
     }
     protected  function deleteProject($ProjectId){
-        $stmt = "DELETE FROM projects WHERE ProjectId = '$ProjectId'";
+       try{
+        $stmt = "DELETE FROM `projects` WHERE `ProjectID`= '$ProjectId'";
         $result = $this->c()->query($stmt);
-        return $result;
+        return 1;
+       }
+         catch(Exception $e){
+              $this->errorhandler($e->getMessage());
+              return 0;
+         }
     }
     protected function getTotalProjects(){
         $stmt = "SELECT COUNT(*) from projects";
@@ -131,9 +186,9 @@ if (!file_exists($target_dir)) {
             return $result;
         }
     }
-    public function importEditProjectData($ProjectID, $ProjectTitle, $ProjectTech, $ProjectDescription, $file, $ProjectDuration, $ProjectStatus){
+    public function importEditProjectData($ProjectTitle, $ProjectTech, $ProjectDescription, $file, $ProjectDuration, $ProjectStatus, $ProjectID){
         $pr = new Project();
-        $result = $pr->updateProject($ProjectID,$ProjectTitle, $ProjectTech, $ProjectDescription, $file, $ProjectDuration, $ProjectStatus);
+        $result = $pr->updateProject($ProjectTitle, $ProjectTech, $ProjectDescription, $file, $ProjectDuration, $ProjectStatus, $ProjectID);
         return $result;
     }
     public function fetchProjectData(){
@@ -144,6 +199,11 @@ if (!file_exists($target_dir)) {
     public function importProjectData($ProjectTitle, $ProjectDescription, $ProjectTech, $ProjectImage, $ProjectStatus, $ProjectDuration){
         $pr = new Project();
         $result = $pr->addProject($ProjectTitle, $ProjectDescription, $ProjectTech, $ProjectImage, $ProjectStatus, $ProjectDuration);
+        return $result;
+    }
+    public function importdeleteProject($ProjectId){
+        $pr = new Project();
+        $result = $pr->deleteProject($ProjectId);
         return $result;
     }
    
@@ -168,8 +228,9 @@ class Partners extends admin{
         $result = $this->c()->query($stmt);
         return $result;
     }
-    protected  function addPartner($PartnerName, $PartnerDiscription, $PartnerLogo, $PartnerDuration, $PartnerStatus){
-        // add Image upload code here
+    protected  function addPartner($PartnerName, $PartnerDiscription, $file, $PartnerDuration, $PartnerStatus){
+       try{
+         // add Image upload code here
         // Image upload code
     $target_dir = "../uploads/Partners/";  // Adjust path as needed
     $file = $_FILES["PartnerImage"];  // Assuming the image input name is "image"
@@ -201,8 +262,53 @@ class Partners extends admin{
         $stmt = "INSERT INTO partners (CompanyName, CompanyDescription, CompanyLogo, CompanyDuration, PartnershipStatus) VALUES ('$PartnerName', '$PartnerDiscription', '$target_file', '$PartnerDuration', '$PartnerStatus')";
         $result = $this->c()->query($stmt);
         return $result;
+       }
+       catch(Exception $e){
+            $this->errorhandler($e->getMessage());
+            return;
+       }
     }
     protected  function updatePartner($PartnerID, $PartnerName, $PartnerLogo, $PartnerDiscription,$PartnerDuration,$PartnerStatus){
+        try{
+            // Image upload code
+            $target_dir = "../uploads/Partners/";  // Adjust path as needed
+            $file = $_FILES["PartnerImage"];  // Assuming the image input name is "image"
+            if (!file_exists($target_dir)) {
+                mkdir($target_dir, 0755, true); 
+            }
+
+            // Generate a unique filename with timestamp
+            $uniqueFilename = "Techville_" . str_replace(' ', '_', $PartnerName) . "_" . time() . ".png";
+            $target_file = $target_dir . $uniqueFilename;
+
+            $uploadOk = 1;
+            $imageFileType = strtolower(pathinfo($target_file, PATHINFO_EXTENSION));
+
+            // Image validation checks (same as previous example)
+
+            // Check if $uploadOk is set to 0 by an error
+            if ($uploadOk == 0) {
+                $this->errorhandler("Sorry, your file was not uploaded.");
+                return;
+            }
+
+            // If everything is ok, try to upload file
+            if (move_uploaded_file($file["tmp_name"], $target_file)) {
+                echo "<script>alert('The file ". basename( $file["name"]). " has been uploaded.');</script>";
+            } else {
+                $this->errorhandler("Sorry, there was an error uploading your file.");
+                return;
+            }
+
+            // Insert image path into database
+            $stmt = "UPDATE partners SET CompanyName = '$PartnerName', CompanyLogo = '$target_file', CompanyDescription = '$PartnerDiscription', CompanyDuration = '$PartnerDuration', PartnershipStatus = '$PartnerStatus' WHERE PartnerID = '$PartnerID'";
+            $result = $this->c()->query($stmt);
+            return $result;
+        } catch (Exception $e) {
+            $this->errorhandler($e->getMessage());
+            return;
+            
+        }
         $stmt = "UPDATE partners SET CompanyName = '$PartnerName', CompanyLogo = '$PartnerLogo', CompanyDescription = '$PartnerDiscription', CompanyDuration = '$PartnerDuration', PartnershipStatus = '$PartnerStatus' WHERE PartnerID = '$PartnerID'";
         $result = $this->c()->query($stmt);
         return $result;
@@ -232,6 +338,11 @@ class Partners extends admin{
         $result = $pr->updatePartner($PartnerID, $PartnerName, $PartnerLogo, $PartnerDiscription, $PartnerDuration, $PartnerStatus);
         return $result;
     }
+    public function importdeletePartner($PartnerID){
+        $pr = new Partners();
+        $result = $pr->deletePartner($PartnerID);
+        return $result;
+    }
         
 }
 class Query extends Admin{
@@ -254,6 +365,7 @@ class Query extends Admin{
         $result = $pr->get_query();
         return $result;
     }
+    
     
 
 }

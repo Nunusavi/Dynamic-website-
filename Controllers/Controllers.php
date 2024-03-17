@@ -16,8 +16,7 @@ class Controllers extends Admin{
             }
         }  
     }
-    
-    
+
     //method to get Project data
     public function getProject(){
         $pr = new Project();
@@ -36,21 +35,22 @@ class Controllers extends Admin{
         $pr = new Project();
     
         // Use the uploaded image path for insertion
-        $result = $pr->importProjectData($ProjectTitle, $ProjectDescription, $ProjectTech, $file, $ProjectStatus, $ProjectDuration);
+        $result = $pr->importProjectData($ProjectTitle, $ProjectDescription, $ProjectTech, $file, $ProjectDuration, $ProjectStatus);
     
         return $result;
+        $this->refresh();
     }
     
     // Method to edit project
-    public function editProject($ProjectID, $ProjectTitle, $ProjectTech, $ProjectDescription, $file, $ProjectDuration, $ProjectStatus){
+    public function editProject($ProjectTitle, $ProjectTech, $ProjectDescription, $file, $ProjectDuration, $ProjectStatus, $ProjectID){
         $pr = new Project();
-        $result = $this->$pr->editProject($ProjectID, $ProjectTitle, $ProjectTech, $ProjectDescription, $file, $ProjectDuration, $ProjectStatus);
+        $result = $pr->importEditProjectData($ProjectTitle, $ProjectTech, $ProjectDescription, $file, $ProjectDuration, $ProjectStatus, $ProjectID);
         return $result;
     }
     // Method to delete project
     public function deleteProject($ProjectId){
         $pr = new Project();
-        $result = $this->$pr->deleteProject($ProjectId);
+        $result = $pr->importdeleteProject($ProjectId);
         return $result;
     }
     //Method to get partner data 
@@ -64,25 +64,33 @@ class Controllers extends Admin{
         $pa = new Partners();
         $result = $pa->importPartnerData($PartnerName,$PartnerDiscription, $PartnerLogo,  $PartnerDuration, $PartnerStatus);
         return $result;
+
     }
     // Method to edit partner
     public function editPartner($PartnerID, $PartnerName, $PartnerLogo, $PartnerDiscription, $PartnerDuration, $PartnerStatus){
         $pa = new Partners();
         $result = $pa->importEditPartnerData($PartnerID, $PartnerName, $PartnerLogo, $PartnerDiscription, $PartnerDuration, $PartnerStatus);
         return $result;
+
     }
     // Method to delete partner
     public function deletePartner($PartnerID){
         $pa = new Partners();
         $result = $this->$pa->deletePartner($PartnerID);
         return $result;
+
     }
     public function getQuery(){
         $qu = new Query();
         $result = $qu->fetchQueryData();
         return $result;
     }
-    
+    // Fucntion to reply to query using the query email
+    public function replyQuery($to, $subject, $queryReply){
+        mail($to, $subject, $queryReply);
+        return '<script>alert("Reply Sent Successfully")</script>';
+    }
+
 
 }
 ?>

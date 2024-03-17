@@ -27,6 +27,18 @@
     height: 10%;
 
 }
+a .btn{
+    margin-top: 10px;
+    background-color: white;
+    color: rgb(255, 0, 0);
+}
+/* hover for btn */
+a .btn:hover{
+    color: white;
+    background-color: rgb(255, 0, 0);
+}
+
+
 
 body {
     /* padding-top: 56px; */

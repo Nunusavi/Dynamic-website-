@@ -19,7 +19,7 @@
     <section>
         <div class="fixed-top px-5">
             <div class="d-flex flex-row text-center">
-                <img class="border-warning" src="../Assets/Logo.jpg" style="width: 50px; z-index: 1;" alt="">
+                <img class="border-warning" src="../Dashboard/Assets/Logo.jpg" style="width: 50px; z-index: 1;" alt="">
                 <p class="fs-4 fw-bolder mt-4 mx-3">TechVilleTechnologies</p>
             </div>
     </section>
